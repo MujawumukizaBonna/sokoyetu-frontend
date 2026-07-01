@@ -23,9 +23,19 @@ export default function Login() {
     setLoading(true);
     setError('');
     try {
-      const res = await login(form);
-      loginUser(res.data.token, res.data.user);
-      navigate(res.data.user.role === 'retailer' ? '/retailer' : '/manufacturer');
+    const res = await login(form);
+const userRole = res.data.user.role;
+
+// Check if user is trying to log in from the correct role screen
+if (userRole !== role) {
+  setError(
+    `This account is registered as a ${userRole}. Please go back and select ${userRole === 'retailer' ? 'Rural retailer' : 'Manufacturer'}.`
+  );
+  return;
+}
+
+loginUser(res.data.token, res.data.user);
+navigate(userRole === 'retailer' ? '/retailer' : '/manufacturer');
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed. Please try again.');
     } finally {
