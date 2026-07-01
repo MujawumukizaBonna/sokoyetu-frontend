@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { register } from '../api';
+import { register, login } from '../api';
 import { useAuth } from '../context/AuthContext';
 
 const DISTRICTS = ['Bugesera','Burera','Gakenke','Gasabo','Gatsibo','Gicumbi','Gisagara','Huye','Kamonyi','Karongi','Kayonza','Kicukiro','Kirehe','Muhanga','Musanze','Ngoma','Ngororero','Nyabihu','Nyagatare','Nyamagabe','Nyamasheke','Nyanza','Nyarugenge','Nyaruguru','Rubavu','Ruhango','Rulindo','Rusizi','Rutsiro','Rwamagana'];
@@ -29,7 +29,7 @@ export default function Register() {
     setLoading(true);
     setError('');
     try {
-    const res = await login(form);
+   const res = await register(form);
 const userRole = res.data.user.role;
 
 // Check if user is trying to log in from the correct role screen
