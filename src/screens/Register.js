@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { register, login } from '../api';
+import { register } from '../api';
 import { useAuth } from '../context/AuthContext';
 
-const DISTRICTS = ['Bugesera','Burera','Gakenke','Gasabo','Gatsibo','Gicumbi','Gisagara','Huye','Kamonyi','Karongi','Kayonza','Kicukiro','Kirehe','Muhanga','Musanze','Ngoma','Ngororero','Nyabihu','Nyagatare','Nyamagabe','Nyamasheke','Nyanza','Nyarugenge','Nyaruguru','Rubavu','Ruhango','Rulindo','Rusizi','Rutsiro','Rwamagana'];
+const DISTRICTS = ['Bugesera','Burera','Gakenke','Gasabo','Gatsibo','Gicumbi',
+'Gisagara','Huye','Kamonyi','Karongi','Kayonza','Kicukiro','Kirehe','Muhanga',
+'Musanze','Ngoma','Ngororero','Nyabihu','Nyagatare','Nyamagabe','Nyamasheke',
+'Nyanza','Nyarugenge','Nyaruguru','Rubavu','Ruhango','Rulindo','Rusizi',
+'Rutsiro','Rwamagana'];
 
 export default function Register() {
   const navigate = useNavigate();
@@ -11,7 +15,9 @@ export default function Register() {
   const role = params.get('role') || 'retailer';
   const { loginUser } = useAuth();
 
-  const [form, setForm] = useState({ name: '', phone: '', password: '', location: '', role });
+  const [form, setForm] = useState({
+    name: '', phone: '', password: '', location: '', role
+  });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -29,19 +35,9 @@ export default function Register() {
     setLoading(true);
     setError('');
     try {
-   const res = await register(form);
-const userRole = res.data.user.role;
-
-// Check if user is trying to log in from the correct role screen
-if (userRole !== role) {
-  setError(
-    `This account is registered as a ${userRole}. Please go back and select ${userRole === 'retailer' ? 'Rural retailer' : 'Manufacturer'}.`
-  );
-  return;
-}
-
-loginUser(res.data.token, res.data.user);
-navigate(userRole === 'retailer' ? '/retailer' : '/manufacturer');
+      const res = await register(form);
+      loginUser(res.data.token, res.data.user);
+      navigate(role === 'retailer' ? '/retailer' : '/manufacturer');
     } catch (err) {
       setError(err.response?.data?.error || 'Registration failed. Please try again.');
     } finally {
@@ -51,10 +47,10 @@ navigate(userRole === 'retailer' ? '/retailer' : '/manufacturer');
 
   return (
     <div style={{ padding: '32px 24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-      <button className="nav-back" onClick={() => navigate('/')} style={{ marginBottom: 24, alignSelf: 'flex-start' }}>
+      <button className="nav-back" onClick={() => navigate('/')}
+        style={{ marginBottom: 24, alignSelf: 'flex-start' }}>
         ‹ Back
       </button>
-
       <div style={{ marginBottom: 28 }}>
         <p style={{ fontSize: 24, fontWeight: 700, marginBottom: 6 }}>
           {role === 'retailer' ? '🛒' : '🏭'} Create account
@@ -63,29 +59,18 @@ navigate(userRole === 'retailer' ? '/retailer' : '/manufacturer');
           Register as a {role}
         </p>
       </div>
-
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14, flex: 1 }}>
         {error && <div className="error-box">{error}</div>}
-
         <div className="field">
           <label>{role === 'retailer' ? 'Full name' : 'Company name'}</label>
-          <input
-            value={form.name}
-            onChange={e => set('name', e.target.value)}
-            placeholder={role === 'retailer' ? 'e.g. Amina Uwimana' : 'e.g. Inyange Industries'}
-          />
+          <input value={form.name} onChange={e => set('name', e.target.value)}
+            placeholder={role === 'retailer' ? 'e.g. Amina Uwimana' : 'e.g. Inyange Industries'} />
         </div>
-
         <div className="field">
           <label>Phone number</label>
-          <input
-            type="tel"
-            value={form.phone}
-            onChange={e => set('phone', e.target.value)}
-            placeholder="e.g. 0788123456"
-          />
+          <input type="tel" value={form.phone} onChange={e => set('phone', e.target.value)}
+            placeholder="e.g. 0788123456" />
         </div>
-
         <div className="field">
           <label>{role === 'retailer' ? 'Your district' : 'Company location'}</label>
           <select value={form.location} onChange={e => set('location', e.target.value)}>
@@ -93,21 +78,15 @@ navigate(userRole === 'retailer' ? '/retailer' : '/manufacturer');
             {DISTRICTS.map(d => <option key={d}>{d}</option>)}
           </select>
         </div>
-
         <div className="field">
           <label>Password</label>
-          <input
-            type="password"
-            value={form.password}
-            onChange={e => set('password', e.target.value)}
-            placeholder="Minimum 6 characters"
-          />
+          <input type="password" value={form.password} onChange={e => set('password', e.target.value)}
+            placeholder="Minimum 6 characters" />
         </div>
-
-        <button className="btn-primary" onClick={handleSubmit} disabled={loading} style={{ marginTop: 8 }}>
+        <button className="btn-primary" onClick={handleSubmit} disabled={loading}
+          style={{ marginTop: 8 }}>
           {loading ? 'Creating account…' : 'Create account'}
         </button>
-
         <p style={{ textAlign: 'center', fontSize: 14, color: 'var(--text-secondary)' }}>
           Already have an account?{' '}
           <Link to={`/login?role=${role}`} style={{ color: 'var(--blue)', fontWeight: 500 }}>
